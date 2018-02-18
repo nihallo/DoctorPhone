@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by Angela on 5/11/2017.
+ * Created by LEO on 5/11/2017.
  */
 
 public class MyService extends Service implements SensorEventListener {
@@ -57,17 +57,7 @@ public class MyService extends Service implements SensorEventListener {
 
     @Override
     public void onDestroy() {
-
-
-        isSensorStopped=true;
-
-        Log.d(TAG, "isSensorStopped "+isSensorStopped);
         Toast.makeText(this, "OMG im destroyed",Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "On Destory"+ DateFormat.getDateTimeInstance().format(new Date()));
-
-        if(mSensorManagr !=null){
-            Log.d(TAG, "OMG mSensorManager is still there");
-        }
     }
 
     @Nullable
@@ -110,7 +100,6 @@ public class MyService extends Service implements SensorEventListener {
                 }
             }
         }).start();
-
     }
 
     @Override

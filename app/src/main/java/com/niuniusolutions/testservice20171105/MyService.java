@@ -1,7 +1,10 @@
 package com.niuniusolutions.testservice20171105;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,10 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
-
-import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by LEO on 5/11/2017.
@@ -21,18 +21,12 @@ import java.util.Date;
 
 public class MyService extends Service implements SensorEventListener {
 
-    private static final String TAG =MyService.class.getSimpleName() ;
+    private static final String TAG = MyService.class.getSimpleName();
     private SensorManager mSensorManagr;
     private Sensor mSensor;
-    private boolean isSensorStopped=false;
-
-    private Calendar currentDate = Calendar.getInstance();
-    private Calendar nextDate = Calendar.getInstance();
-
-    int hour = currentDate.get(Calendar.HOUR);
-    int minute = currentDate.get(Calendar.MINUTE);
-    int currentTime=hour*100+minute;
-    int futureTime=hour*100+minute+1;
+    private BroadcastReceiver mReceiver;
+    private boolean screenOff=false;
+    private boolean listenerOff=false;
 
     @Override
     public void onCreate() {
@@ -43,21 +37,28 @@ public class MyService extends Service implements SensorEventListener {
         mSensorManagr = (SensorManager) getSystemService(SENSOR_SERVICE);
         //Accelerometer Sensor
         mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        //Register Sensor Listenner
-        mSensorManagr.registerListener(MyService.this, mSensor,SensorManager.SENSOR_DELAY_NORMAL);
+        //Register Sensor Listener
+        Log.d(TAG, "Register first listener.");
+        registerListener();
 
+        // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
+        mReceiver = new ScreenReceiver();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        this.registerReceiver(mReceiver, filter);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service started",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "service started", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "On start command");
         return Service.START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "OMG im destroyed",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "OMG im destroyed", Toast.LENGTH_SHORT).show();
+        unregisterReceiver(mReceiver);
     }
 
     @Nullable
@@ -68,31 +69,38 @@ public class MyService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        float[] g ;
+        float[] g;
         g = sensorEvent.values.clone();
-        float norm_Of_g = (float)Math.sqrt(g[0] * g[0] + g[1] * g[1] + g[2] * g[2]);
+        float norm_Of_g = (float) Math.sqrt(g[0] * g[0] + g[1] * g[1] + g[2] * g[2]);
         // Normalize the accelerometer vector
         g[0] = g[0] / norm_Of_g;
         g[1] = g[1] / norm_Of_g;
         g[2] = g[2] / norm_Of_g;
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
         int rotation = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[1])));
-        if(inclination<45) {
-            Toast.makeText(this, "phone angle changed: inclination=" + inclination+" , Rotation="+rotation, Toast.LENGTH_LONG).show();
+        if (inclination < 40) {
+            Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
         }
 
-        mSensorManagr.unregisterListener(MyService.this,mSensor);
-        Log.d(TAG,"STOPPED LISTENER");
+        Log.d(TAG, "----------Unregistered listener.");
+        if(!listenerOff){
+            mSensorManagr.unregisterListener(MyService.this, mSensor);
+            listenerOff=true;
+        }
+
 
         //stop for 10 seconds and call register again
-        new Thread(new Runnable(){
+        new Thread(new Runnable() {
             public void run() {
                 // TODO Auto-generated method stub
-                while(true)
-                {
+                while (true) {
                     try {
-                        Thread.sleep(60*1000);
-                        registerListener();
+                        Log.d(TAG, "timer 1/60.");
+                        Thread.sleep(60 * 1000);
+                        Log.d(TAG, "timer 60/60.");
+                        if(!screenOff){
+                            registerListener();
+                        }
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -107,10 +115,25 @@ public class MyService extends Service implements SensorEventListener {
         //not in use
     }
 
-    private void registerListener(){
-        //Register Sensor Listenner
-        Log.d(TAG,"STARTED LISTENER");
-
-        mSensorManagr.registerListener(MyService.this, mSensor,SensorManager.SENSOR_DELAY_NORMAL);
+    private void registerListener() {
+        //Register Sensor Listener
+        mSensorManagr.registerListener(MyService.this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        Log.d(TAG, "Listener registered.");
     }
+
+    private class ScreenReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if( intent.getAction().equals(intent.ACTION_SCREEN_OFF)) {
+                screenOff =true;
+                Log.d(TAG, "Screen is off");
+
+            }else if (intent.getAction().equals(intent.ACTION_SCREEN_ON)){
+                screenOff =false;
+                Log.d(TAG, "Screen is on");
+            }
+        }
+    }
+
+
 }

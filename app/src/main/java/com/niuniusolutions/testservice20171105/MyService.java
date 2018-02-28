@@ -9,6 +9,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -80,9 +81,11 @@ public class MyService extends Service implements SensorEventListener {
         int rotation = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[1])));
         if (inclination < 40) {
             Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
+
+            Log.d(TAG, "event detected, make toast.");
         }
 
-        Log.d(TAG, "----------Unregistered listener.");
+        Log.d(TAG, "Unregistered listener.");
         if(!listenerOff){
             mSensorManagr.unregisterListener(MyService.this, mSensor);
             listenerOff=true;
@@ -90,24 +93,17 @@ public class MyService extends Service implements SensorEventListener {
 
 
         //stop for 10 seconds and call register again
-        new Thread(new Runnable() {
+        Log.d(TAG, "waiting started, timer 01/60.");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
             public void run() {
-                // TODO Auto-generated method stub
-                while (true) {
-                    try {
-                        Log.d(TAG, "timer 1/60.");
-                        Thread.sleep(60 * 1000);
-                        Log.d(TAG, "timer 60/60.");
-                        if(!screenOff){
-                            registerListener();
-                        }
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+                Log.d(TAG, "inside runnable, before register Listener");
+                if(!screenOff){
+                    registerListener();
+                }}}, 10*1000);
+
+        Log.d(TAG, "waiting ended,timer 60/60.");
     }
 
     @Override

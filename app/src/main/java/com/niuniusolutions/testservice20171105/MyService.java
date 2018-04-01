@@ -28,6 +28,7 @@ public class MyService extends Service implements SensorEventListener {
     private BroadcastReceiver mReceiver;
     private boolean screenOff=false;
     private boolean listenerOff=false;
+    private Handler handler;
 
     @Override
     public void onCreate() {
@@ -45,7 +46,7 @@ public class MyService extends Service implements SensorEventListener {
         createLooper();
     }
 
-
+    private void registerReceiver(){
         // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
         mReceiver = new ScreenReceiver();
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -59,9 +60,11 @@ public class MyService extends Service implements SensorEventListener {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                listenerOff = false;
-                registerListener();
-                Log.i("tag1", "delayed");
+                if(!screenOff) {
+                    registerListener();
+                    listenerOff = false;
+                    Log.i("tag1", "delayed");
+                }
                 handler.postDelayed(this, 10 * 1000);
             }
         }, 10 * 1000);
@@ -97,9 +100,8 @@ public class MyService extends Service implements SensorEventListener {
         g[2] = g[2] / norm_Of_g;
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
         int rotation = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[1])));
-        if (inclination < 40) {
+        if (inclination < 40 & !screenOff) {
             Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
-
             Log.d(TAG, "event detected, make toast.");
         }
 
@@ -108,10 +110,6 @@ public class MyService extends Service implements SensorEventListener {
             mSensorManagr.unregisterListener(MyService.this, mSensor);
             listenerOff=true;
         }
-
-        listenerOff = true;
-        unregisterListener();
-
     }
 
     @Override

@@ -37,7 +37,6 @@ public class MyService extends Service implements SensorEventListener {
         mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         //Register Sensor Listener
         Log.d(TAG, "Register first listener.");
-        registerListener();
         registerReceiver();
         createLooper();
     }
@@ -55,6 +54,7 @@ public class MyService extends Service implements SensorEventListener {
             @Override
             public void run() {
                 listenerOff = false;
+                registerListener();
                 Log.i("tag1", "delayed");
                 handler.postDelayed(this, 10 * 1000);
             }
@@ -100,6 +100,7 @@ public class MyService extends Service implements SensorEventListener {
         }
 
         listenerOff = true;
+        unregisterListener();
     }
 
     @Override
@@ -111,6 +112,11 @@ public class MyService extends Service implements SensorEventListener {
         //Register Sensor Listener
         mSensorManagr.registerListener(MyService.this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
         Log.d(TAG, "Listener registered.");
+    }
+
+    private void unregisterListener() {
+        mSensorManagr.unregisterListener(this);
+        Log.i(TAG, "Listener unregistered");
     }
 
     private class ScreenReceiver extends BroadcastReceiver {

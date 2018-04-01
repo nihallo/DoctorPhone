@@ -38,7 +38,8 @@ public class MyService extends Service implements SensorEventListener {
         //Create our Sensor Manager
         mSensorManagr = (SensorManager) getSystemService(SENSOR_SERVICE);
         //Accelerometer Sensor
-        mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
         //Register Sensor Listener
         Log.d(TAG, "Register first listener.");
 
@@ -65,9 +66,9 @@ public class MyService extends Service implements SensorEventListener {
                     listenerOff = false;
                     Log.i("tag1", "delayed");
                 }
-                handler.postDelayed(this, 10 * 1000);
+                handler.postDelayed(this, 60 * 1000);
             }
-        }, 10 * 1000);
+        }, 60 * 1000);
     }
 
     @Override

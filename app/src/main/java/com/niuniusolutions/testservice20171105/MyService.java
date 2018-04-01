@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
+import java.util.Calendar;
 
 /**
  * Created by LEO on 5/11/2017.
@@ -25,12 +26,14 @@ public class MyService extends Service implements SensorEventListener {
     private SensorManager mSensorManagr;
     private Sensor mSensor;
     private BroadcastReceiver mReceiver;
-    private boolean screenOff = false;
-    private boolean listenerOff = false;
-    private Handler handler;
+    private boolean screenOff=false;
+    private boolean listenerOff=false;
 
     @Override
     public void onCreate() {
+        Thread thread = new Thread();
+        thread.setName("NiuniuDoctor");
+        thread.start();
         //Create our Sensor Manager
         mSensorManagr = (SensorManager) getSystemService(SENSOR_SERVICE);
         //Accelerometer Sensor
@@ -38,27 +41,12 @@ public class MyService extends Service implements SensorEventListener {
         //Register Sensor Listener
         Log.d(TAG, "Register first listener.");
         registerListener();
-        registerReceiver();
-        createLooper();
-    }
 
-    private void registerReceiver() {
+        // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
         mReceiver = new ScreenReceiver();
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         this.registerReceiver(mReceiver, filter);
-    }
-
-    private void createLooper() {
-        handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                listenerOff = false;
-                Log.i("tag1", "delayed");
-                handler.postDelayed(this, 10 * 1000);
-            }
-        }, 10 * 1000);
     }
 
     @Override
@@ -71,7 +59,6 @@ public class MyService extends Service implements SensorEventListener {
     @Override
     public void onDestroy() {
         Toast.makeText(this, "OMG im destroyed", Toast.LENGTH_SHORT).show();
-        handler.removeCallbacksAndMessages(null);
         unregisterReceiver(mReceiver);
     }
 
@@ -92,14 +79,31 @@ public class MyService extends Service implements SensorEventListener {
         g[2] = g[2] / norm_Of_g;
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
         int rotation = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[1])));
-        if (!listenerOff) {
-            if (inclination < 40 && !screenOff) {
-                Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
-                Log.d(TAG, "event detected, make toast.");
-            }
+        if (inclination < 40) {
+            Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
+
+            Log.d(TAG, "event detected, make toast.");
         }
 
-        listenerOff = true;
+        Log.d(TAG, "Unregistered listener.");
+        if(!listenerOff){
+            mSensorManagr.unregisterListener(MyService.this, mSensor);
+            listenerOff=true;
+        }
+
+
+        //stop for 10 seconds and call register again
+        Log.d(TAG, "waiting started, timer 01/60.");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "inside runnable, before register Listener");
+                if(!screenOff){
+                    registerListener();
+                }}}, 10*1000);
+
+        Log.d(TAG, "waiting ended,timer 60/60.");
     }
 
     @Override
@@ -116,12 +120,12 @@ public class MyService extends Service implements SensorEventListener {
     private class ScreenReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(intent.ACTION_SCREEN_OFF)) {
-                screenOff = true;
+            if( intent.getAction().equals(intent.ACTION_SCREEN_OFF)) {
+                screenOff =true;
                 Log.d(TAG, "Screen is off");
 
-            } else if (intent.getAction().equals(intent.ACTION_SCREEN_ON)) {
-                screenOff = false;
+            }else if (intent.getAction().equals(intent.ACTION_SCREEN_ON)){
+                screenOff =false;
                 Log.d(TAG, "Screen is on");
             }
         }

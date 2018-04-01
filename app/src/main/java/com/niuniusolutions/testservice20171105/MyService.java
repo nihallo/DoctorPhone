@@ -40,13 +40,31 @@ public class MyService extends Service implements SensorEventListener {
         mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         //Register Sensor Listener
         Log.d(TAG, "Register first listener.");
-        registerListener();
+
+        registerReceiver();
+        createLooper();
+    }
+
 
         // REGISTER RECEIVER THAT HANDLES SCREEN ON AND SCREEN OFF LOGIC
         mReceiver = new ScreenReceiver();
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         this.registerReceiver(mReceiver, filter);
+    }
+
+
+    private void createLooper() {
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                listenerOff = false;
+                registerListener();
+                Log.i("tag1", "delayed");
+                handler.postDelayed(this, 10 * 1000);
+            }
+        }, 10 * 1000);
     }
 
     @Override
@@ -91,19 +109,9 @@ public class MyService extends Service implements SensorEventListener {
             listenerOff=true;
         }
 
+        listenerOff = true;
+        unregisterListener();
 
-        //stop for 10 seconds and call register again
-        Log.d(TAG, "waiting started, timer 01/60.");
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "inside runnable, before register Listener");
-                if(!screenOff){
-                    registerListener();
-                }}}, 10*1000);
-
-        Log.d(TAG, "waiting ended,timer 60/60.");
     }
 
     @Override
@@ -115,6 +123,11 @@ public class MyService extends Service implements SensorEventListener {
         //Register Sensor Listener
         mSensorManagr.registerListener(MyService.this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
         Log.d(TAG, "Listener registered.");
+    }
+
+    private void unregisterListener() {
+        mSensorManagr.unregisterListener(this);
+        Log.i(TAG, "Listener unregistered");
     }
 
     private class ScreenReceiver extends BroadcastReceiver {

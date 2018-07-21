@@ -1,4 +1,4 @@
-package com.niuniusolutions.testservice20171105;
+package com.niuniusolutions.healthyniu;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -17,9 +17,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-import java.util.Calendar;
 
-import static com.niuniusolutions.testservice20171105.App.CHANNEL_ID;
+import static com.niuniusolutions.healthyniu.App.CHANNEL_ID;
 
 /**
  * Created by LEO on 5/11/2017.
@@ -38,7 +37,7 @@ public class MyService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         Thread thread = new Thread();
-        thread.setName("NiuniuDoctor");
+        thread.setName("HealthyNeck");
         thread.start();
         //Create our Sensor Manager
         mSensorManagr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -85,9 +84,9 @@ public class MyService extends Service implements SensorEventListener {
                 0,notificationIntent,0);
 
         Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
-                .setContentTitle("niuniu Doctor")
-                .setContentText("save our neck and spine")
-                .setSmallIcon(R.drawable.ic_android_niuniu_doctor)
+                .setContentTitle("Healthy Neck")
+                .setContentText("Raise ur Phone Higher & Save the Neck!")
+                .setSmallIcon(R.drawable.notificationicon)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(333,notification);
@@ -118,7 +117,8 @@ public class MyService extends Service implements SensorEventListener {
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
         int rotation = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[1])));
         if (inclination < 40 & !screenOff) {
-            Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Raise e Phone Higher, Heads Up, Protect the Neck!", Toast.LENGTH_LONG).show();
             Log.d(TAG, "event detected, make toast.");
         }
 

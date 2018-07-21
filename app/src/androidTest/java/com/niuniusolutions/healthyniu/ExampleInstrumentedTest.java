@@ -1,4 +1,4 @@
-package com.niuniusolutions.testservice20171105;
+package com.niuniusolutions.healthyniu;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

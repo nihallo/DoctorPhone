@@ -1,4 +1,4 @@
-package com.niuniusolutions.testservice20171105;
+package com.niuniusolutions.healthyniu;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

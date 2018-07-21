@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">TestService20171105</string>
+    <string name="app_name">Healthy Neck</string>
+    <string name="StartBtnText">Start!</string>
+    <string name="StopBtnText">Stop Caring</string>
+    <string name="promoteText">Raise ur Phone Higher &amp; Save the Neck!\n\nWe will alter u when ur reading posture is hurting u.</string>
+    <string name="raisePhone">Raise the phone up and relax your neck.</string>
+
 </resources>

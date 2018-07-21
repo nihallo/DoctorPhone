@@ -1,5 +1,7 @@
 package com.niuniusolutions.testservice20171105;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,9 +14,12 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 import java.util.Calendar;
+
+import static com.niuniusolutions.testservice20171105.App.CHANNEL_ID;
 
 /**
  * Created by LEO on 5/11/2017.
@@ -40,7 +45,6 @@ public class MyService extends Service implements SensorEventListener {
         //Accelerometer Sensor
         mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         //Register Sensor Listener
-        Log.d(TAG, "Register first listener.");
 
         registerReceiver();
         createLooper();
@@ -65,15 +69,27 @@ public class MyService extends Service implements SensorEventListener {
                     listenerOff = false;
                     Log.i("tag1", "delayed");
                 }
-                handler.postDelayed(this, 10 * 1000);
+                handler.postDelayed(this, 60 * 1000);
             }
-        }, 10 * 1000);
+        }, 60 * 1000);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "service started", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "On start command");
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0,notificationIntent,0);
+
+        Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
+                .setContentTitle("niuniu Doctor")
+                .setContentText("save our neck and spine")
+                .setSmallIcon(R.drawable.ic_android_niuniu_doctor)
+                .setContentIntent(pendingIntent)
+                .build();
+        startForeground(333,notification);
         return Service.START_STICKY;
     }
 
@@ -107,7 +123,7 @@ public class MyService extends Service implements SensorEventListener {
 
         Log.d(TAG, "Unregistered listener.");
         if(!listenerOff){
-            mSensorManagr.unregisterListener(MyService.this, mSensor);
+            unregisterListener();
             listenerOff=true;
         }
     }
@@ -124,7 +140,7 @@ public class MyService extends Service implements SensorEventListener {
     }
 
     private void unregisterListener() {
-        mSensorManagr.unregisterListener(this);
+        mSensorManagr.unregisterListener(this,mSensor);
         Log.i(TAG, "Listener unregistered");
     }
 

@@ -43,7 +43,8 @@ public class MyService extends Service implements SensorEventListener {
         //Create our Sensor Manager
         mSensorManagr = (SensorManager) getSystemService(SENSOR_SERVICE);
         //Accelerometer Sensor
-        mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
         //Register Sensor Listener
 
         registerReceiver();

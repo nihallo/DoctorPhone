@@ -2,7 +2,7 @@
     <string name="app_name">Healthy Neck</string>
     <string name="StartBtnText">Start!</string>
     <string name="StopBtnText">Stop Caring</string>
-    <string name="promoteText">Raise ur Phone Higher &amp; Save the Neck!\n\nWe will alter u when ur reading posture is hurting ur neck.</string>
+    <string name="promoteText">Raise ur Phone Higher &amp; Save the Neck!\nWe will alert u when ur reading posture is hurting ur neck every 1 min, no battery impact.</string>
     <string name="raisePhone">Raise the phone up and relax your neck.</string>
 
 </resources>

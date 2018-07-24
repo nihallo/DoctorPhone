@@ -32,6 +32,7 @@
         android:text="@string/StartBtnText"
         app:layout_constraintBottom_toTopOf="@+id/btnStopService"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -49,8 +50,8 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="365dp"
-        android:layout_height="39dp"
+        android:layout_width="375dp"
+        android:layout_height="49dp"
 
         android:text="@string/raisePhone"
         android:textAlignment="center"

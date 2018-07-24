@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Healthy Neck</string>
-    <string name="StartBtnText">Start!</string>
+    <string name="StartBtnText">Service Running!</string>
     <string name="StopBtnText">Stop Caring</string>
-    <string name="promoteText">Raise ur Phone Higher &amp; Save the Neck!\nWe will alert u when ur reading posture is hurting ur neck every 1 min, no battery impact.</string>
-    <string name="raisePhone">Raise the phone up and relax your neck.</string>
+    <string name="promoteText">You can close this app now, it will run in the background as shown in the top left corner, it will only prompt you when your neck bends too much.</string>
+    <string name="raisePhone">Raise the phone higher, relax your neck.</string>
+    <string name="toastMsg">Raise the phone Higher! Higher! Higher! Yeah!</string>
+    <string name="app_logic">The app checks the tilting degree every 1 minute \n\nWhen it is below 40, it will raise an alert.\n\nIn future, releases, we will let user set the frequency and degree\n\nBattery usage is minimum, does not even show in the usage listing.\n\nTry different degrees and feel your neck movement.</string>
 
 </resources>

@@ -18,13 +18,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mStartButton = (Button) findViewById(R.id.btnStartService);
         mStopButton = (Button) findViewById(R.id.btnStopService);
+        //start the service when the screen loads, even if user did not click on start button.
+        Intent intent = new Intent(MainActivity.this,MyService.class);
+        startService(intent);
 
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG,"On Start click");
                Intent intent = new Intent(MainActivity.this,MyService.class);
-                startService(intent);
+               startService(intent);
+               mStartButton.setText("Service Running!");
             }
         });
 
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,MyService.class);
                 stopService(intent);
+                mStartButton.setText("Start Caring!");
             }
         });
 

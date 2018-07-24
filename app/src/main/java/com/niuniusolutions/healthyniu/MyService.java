@@ -76,10 +76,10 @@ public class MyService extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service started", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "The app is running in the background now.", Toast.LENGTH_LONG).show();
         Log.d(TAG, "On start command");
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, Onboarding.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0,notificationIntent,0);
 

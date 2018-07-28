@@ -54,7 +54,7 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
         g[1]=g[1]/norm_Of_g;
         g[2]=g[2]/norm_Of_g;
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
-        mDegreeText.setText("Tilting Degree: "+inclination);
+        mDegreeText.setText("Phone Angle: "+inclination);
         if (inclination<40){
             mToastMsgText.setVisibility(View.VISIBLE);
         }else {

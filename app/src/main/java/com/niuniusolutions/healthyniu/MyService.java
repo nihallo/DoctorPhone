@@ -85,7 +85,7 @@ public class MyService extends Service implements SensorEventListener {
 
         Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setContentTitle("Healthy Neck")
-                .setContentText("Raise ur Phone Higher & Save the Neck!")
+                .setContentText("Raise ur Phone Higher & Feel the Neck Movement!")
                 .setSmallIcon(R.drawable.notificationicon)
                 .setContentIntent(pendingIntent)
                 .build();
@@ -118,7 +118,7 @@ public class MyService extends Service implements SensorEventListener {
         int rotation = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[1])));
         if (inclination < 40 & !screenOff) {
             //Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
-            Toast.makeText(this, "Raise e Phone Higher, Heads Up, Protect the Neck!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Raise the Phone Higher, Heads Up for the Neck!", Toast.LENGTH_LONG).show();
             Log.d(TAG, "event detected, make toast.");
         }
 

@@ -85,7 +85,7 @@ public class MyService extends Service implements SensorEventListener {
 
         Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setContentTitle("Healthy Neck")
-                .setContentText("Raise ur Phone Higher & Feel the Neck Movement!")
+                .setContentText("Raise the Phone Higher & Feel the Neck Movement!")
                 .setSmallIcon(R.drawable.notificationicon)
                 .setContentIntent(pendingIntent)
                 .build();

@@ -7,16 +7,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import static com.niuniusolutions.healthyniu.App.CHANNEL_ID;
 
@@ -33,21 +38,47 @@ public class MyService extends Service implements SensorEventListener {
     private boolean screenOff=false;
     private boolean listenerOff=false;
     private Handler handler;
+    private int alertAngle;
+    private int alertFrequency;
+    private int angle_0_15;
+    private int angle_16_30;
+    private int angle_31_45;
+    private int angle_46_60;
+    private int angle_61_75;
+    private int angle_76_90;
+    private int angle_91_above;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+    private int failedCounter=0;
 
     @Override
     public void onCreate() {
+
         Thread thread = new Thread();
         thread.setName("HealthyNeck");
         thread.start();
         //Create our Sensor Manager
         mSensorManagr = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         //Accelerometer Sensor
-            mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensor = mSensorManagr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         //Register Sensor Listener
-
         registerReceiver();
         createLooper();
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
+        alertAngle = 40;//mPreferences.getInt(getString(R.string.key_alert_angle),40);
+        alertFrequency = 1;//mPreferences.getInt(getString(R.string.key_alert_frequency),1);
+        angle_0_15=mPreferences.getInt(getString(R.string.key_0_15_angle),0);
+        angle_16_30=mPreferences.getInt(getString(R.string.key_16_30_angle),0);
+        angle_31_45=mPreferences.getInt(getString(R.string.key_31_45_angle),0);
+        angle_46_60=mPreferences.getInt(getString(R.string.key_46_60_angle),0);
+        angle_61_75=mPreferences.getInt(getString(R.string.key_61_75_angle),0);
+        angle_76_90=mPreferences.getInt(getString(R.string.key_76_90_angle),0);
+        angle_91_above=mPreferences.getInt(getString(R.string.key_91_above_angle),0);
+
     }
 
     private void registerReceiver(){
@@ -65,18 +96,19 @@ public class MyService extends Service implements SensorEventListener {
             @Override
             public void run() {
                 if(!screenOff) {
+                    Log.d(TAG, "Listener registered inside looper");
                     registerListener();
                     listenerOff = false;
-                    Log.i("tag1", "delayed");
+                    Log.i(TAG, "Delayed in looper.");
                 }
-                handler.postDelayed(this, 60 * 1000);
+                handler.postDelayed(this, 62 * 1000*alertFrequency);
             }
-        }, 60 * 1000);
+        }, 62 * 1000*alertFrequency);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "The app is running in the background now.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this,R.string.toast_msg_service_started, Toast.LENGTH_LONG).show();
         Log.d(TAG, "On start command");
 
         Intent notificationIntent = new Intent(this, Onboarding.class);
@@ -85,7 +117,7 @@ public class MyService extends Service implements SensorEventListener {
 
         Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setContentTitle("Healthy Neck")
-                .setContentText("Raise the Phone Higher & Feel the Neck Movement!")
+                .setContentText("Good reading posture = don't bend the neck.")
                 .setSmallIcon(R.drawable.notificationicon)
                 .setContentIntent(pendingIntent)
                 .build();
@@ -95,8 +127,10 @@ public class MyService extends Service implements SensorEventListener {
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "OMG im destroyed", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "OMG im destroyed", Toast.LENGTH_SHORT).show();
         unregisterReceiver(mReceiver);
+        unregisterListener();
+        Log.d(TAG, "on destory, after unregister listener.");
     }
 
     @Nullable
@@ -116,10 +150,70 @@ public class MyService extends Service implements SensorEventListener {
         g[2] = g[2] / norm_Of_g;
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
         int rotation = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[1])));
-        if (inclination < 40 & !screenOff) {
-            //Toast.makeText(this, "phone angle changed: inclination=" + inclination + " , Rotation=" + rotation, Toast.LENGTH_LONG).show();
-            Toast.makeText(this, "Raise the Phone Higher, Heads Up for the Neck!", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "event detected, make toast.");
+
+        //record angle
+        if (inclination<=15){
+            angle_0_15++;
+            mEditor.putInt(getString(R.string.key_0_15_angle),angle_0_15);
+        } else if (inclination<=30 &inclination>15) {
+            angle_16_30++;
+            mEditor.putInt(getString(R.string.key_16_30_angle),angle_16_30);
+        } else if (inclination<=45  &inclination>30) {
+            angle_31_45++;
+            mEditor.putInt(getString(R.string.key_31_45_angle),angle_31_45);
+        } else if (inclination<=60 &inclination>45) {
+            angle_46_60++;
+            mEditor.putInt(getString(R.string.key_46_60_angle),angle_46_60);
+        } else if (inclination<=75 &inclination>60) {
+            angle_61_75++;
+            mEditor.putInt(getString(R.string.key_61_75_angle),angle_61_75);
+        } else if (inclination<=90 &inclination>75) {
+            angle_76_90++;
+            mEditor.putInt(getString(R.string.key_76_90_angle),angle_76_90);
+        } else if(inclination>90){
+            angle_91_above++;
+            mEditor.putInt(getString(R.string.key_91_above_angle),angle_91_above);
+        }
+        mEditor.commit();
+
+
+
+        // 0,1 is considered as lying flat, no one is using
+        if(inclination!=0 & inclination!=1) {
+            if (inclination < alertAngle & !screenOff) {
+                failedCounter++;
+                //alertAngle = mPreferences.getInt(getString(R.string.key_alert_angle),40);
+                //alertFrequency = mPreferences.getInt(getString(R.string.key_alert_frequency),1);
+
+                Log.d(TAG, "inside: alert angle:" + alertAngle + ", alert frequency: " + alertFrequency);
+
+                Toast.makeText(this, "Failed "+failedCounter + " times - Healthy Neck Check :(", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "event detected, make toast." + " angle: " + inclination + ", Limit: " + alertAngle + " for every " + alertFrequency + " mins, " + "failed counter: " + failedCounter);
+
+
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(failedCounter));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "failed counter " + failedCounter);
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "failed counter reached " + failedCounter);
+                FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+
+/*                if (failedCounter==10){
+                    // reset counter to  0 when reach 10, show ads
+                    failedCounter=0;
+                }*/
+
+            } else if (!screenOff) {
+                failedCounter = 0;
+            }
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(101010));
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "angle is " + inclination);
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "angle is " + inclination);
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         }
 
         Log.d(TAG, "Unregistered listener.");
@@ -137,7 +231,7 @@ public class MyService extends Service implements SensorEventListener {
     private void registerListener() {
         //Register Sensor Listener
         mSensorManagr.registerListener(MyService.this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        Log.d(TAG, "Listener registered.");
+
     }
 
     private void unregisterListener() {

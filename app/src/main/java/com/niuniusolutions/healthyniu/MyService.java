@@ -50,6 +50,7 @@ public class MyService extends Service implements SensorEventListener {
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
     private int failedCounter=0;
+    private int flatCounter=0;
 
     @Override
     public void onCreate() {
@@ -191,24 +192,27 @@ public class MyService extends Service implements SensorEventListener {
                 Log.d(TAG, "event detected, make toast." + " angle: " + inclination + ", Limit: " + alertAngle + " for every " + alertFrequency + " mins, " + "failed counter: " + failedCounter);
 
                 if (failedCounter >30) { // continuously failed more than 30 times
-                    firebaseEventUpdate( ""+"failed more than 30 times",
+                    firebaseEventUpdate( ""+"Failed",
                             "failed counter more than 30",
-                            "failed counter reached more than 30");
+                            "failed angle is "+ inclination );
                 } else// failed within 30 times
                 {
-                    firebaseEventUpdate( ""+String.valueOf(failedCounter),
+                    firebaseEventUpdate( "Failed",
                         "failed counter " + failedCounter,
-                        "failed counter reached " + failedCounter);
+                        "failed angle is " + inclination);
                 }
 
             } else if (!screenOff) { // angle is ok and screen is not off
                 failedCounter = 0;
             }
+            //reset to 0 if not flat anymore
+            flatCounter=0;
         }  else { // angle is 0,1, lying flat, no one is using
-            firebaseEventUpdate( ""+String.valueOf(101010),
-                                "angle is " + inclination,
+            firebaseEventUpdate( "Flat",
+                                "Flat counter " + flatCounter,
                                 "angle is " + inclination);
-        }
+            flatCounter++;
+                }
 
         Log.d(TAG, "Unregistered listener.");
         if(!listenerOff){

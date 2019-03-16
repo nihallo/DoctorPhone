@@ -1,11 +1,36 @@
 <resources>
-    <string name="app_name">Healthy Neck</string>
-    <string name="StartBtnText">Service Running!</string>
-    <string name="StopBtnText">Stop Caring</string>
-    <string name="promoteText">Can close this app now, it is now run in the background as shown in the top left corner, it will only prompt you when your neck bends too much.</string>
+
+    //SharedPreference keys
+    <string name="key_alert_angle">key_alert_angle</string>
+    <string name="key_alert_frequency">key_alert_frequency</string>
+    <string name="key_0_15_angle">key_0_15_angle</string>
+    <string name="key_16_30_angle">key_16_30_angle</string>
+    <string name="key_31_45_angle">key_31_45_angle</string>
+    <string name="key_46_60_angle">key_46_60_angle</string>
+    <string name="key_61_75_angle">key_61_75_angle</string>
+    <string name="key_76_90_angle">key_76_90_angle</string>
+    <string name="key_91_above_angle">key_91_above_angle</string>
+
+    //display texts
+    <string name="app_name">Stop Neck Pain</string>
+    <string name="toast_msg_service_started">Happy Neck Journey Started :)</string>
+    <string name="settingBtn">Settings</string>
+    <string name="reportBtn">Health Reports</string>
+    <string name="angleSelectionText">Alert Trigger Point/Angle</string>
+    <string name="alterFrequencyText">Alert Frequency</string>
+    <string name="StartBtnText">Service Running. :)</string>
+    <string name="StopBtnText">Stop Caring. :(</string>
+    <string name="promoteText">Running in background</string>
     <string name="raisePhone">Raise the phone higher, relax your neck.</string>
-    <string name="toastMsg">Raise the phone Higher! Higher! Higher! Yeah!</string>
-    <string name="movePhoneUpDown">Raise the phone Up and Down\nFeel the neck movement!</string>
-    <string name="app_logic">1. The app checks phone angle every 1 minute\n2. When angle&lt;40, it will raise an alert like below.\n3. Minimum Battery usage, not even shown on the usage listing.</string>
+    <string name="toastMsg">Raise the phone straight up, Higher! Higher! Yeah!</string>
+    <string name="movePhoneUpDown">Raise the phone higher, higher, Yeah!!!</string>
+    <string name="popup_healthy_neck_failed_message">Failed x times - Healthy Neck Check :(</string>
+    <string name="BtnTextShowReport">How did i do? (After a few days)</string>
+    <string name="app_logic">1. Every one minute, the app will check your reading posture, if it is \'Not Good\' or \'Bad\', it will alert you by pop message that will disappear by itself.
+        \n\n2. The pop up message shows no. of time(continuously) failed \'healthy neck check\'.
+        \n\n3. Don\'t worry about battery, it won\'t even shown on the battery usage listing.</string>
+    <string name="notification_text">Good reading posture, don\'t bend neck.</string>
+    <string name="explainReportText">Angle 50-90 range is better for neck. \n>90 most likely reading while lying down.</string>
+
 
 </resources>

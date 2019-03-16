@@ -13,17 +13,25 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.provider.FirebaseInitProvider;
+
 public class Onboarding extends AppCompatActivity implements SensorEventListener{
     private SensorManager mSM;
     private Sensor mSensor;
     private TextView mDegreeText;
     private TextView mToastMsgText;
     private Button mStartButton;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
+
+        Intent intent = new Intent(this,MyService.class);
+        startService(intent);
+
         //create sensor manager
         mSM = (SensorManager)getSystemService(SENSOR_SERVICE);
         mSensor =mSM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -32,13 +40,24 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
         mDegreeText = (TextView) findViewById(R.id.mDegreeText);
         mToastMsgText = (TextView) findViewById(R.id.toastMsgText);
         mStartButton = (Button) findViewById(R.id.mStartButton);
-
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
             mStartButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mStartButton.getId()));
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mStartButton.getText().toString());
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "start button on first screen");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     Intent intent = new Intent(Onboarding.this,MainActivity.class);
                     Onboarding.this.startActivity(intent);
+
+
+
                 }
             });
 
@@ -54,7 +73,13 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
         g[1]=g[1]/norm_Of_g;
         g[2]=g[2]/norm_Of_g;
         int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
-        mDegreeText.setText("Phone Angle: "+inclination);
+        if (inclination <30) {
+            mDegreeText.setText("Reading Posture: " + "Not Good");
+        } else if (inclination <70){
+            mDegreeText.setText("Reading Posture: " + "Better");
+        } else {
+            mDegreeText.setText("Reading Posture: " + "Good for Neck");
+        }
         if (inclination<40){
             mToastMsgText.setVisibility(View.VISIBLE);
         }else {

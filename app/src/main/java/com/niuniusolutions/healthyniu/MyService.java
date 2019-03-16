@@ -192,6 +192,7 @@ public class MyService extends Service implements SensorEventListener {
 
 
                 Bundle bundle = new Bundle();
+
                 bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(failedCounter));
                 bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "failed counter " + failedCounter);
                 bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "failed counter reached " + failedCounter);
@@ -242,6 +243,9 @@ public class MyService extends Service implements SensorEventListener {
     private class ScreenReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+
+
             if( intent.getAction().equals(intent.ACTION_SCREEN_OFF)) {
                 screenOff =true;
                 Log.d(TAG, "Screen is off");

@@ -192,8 +192,8 @@ public class MyService extends Service implements SensorEventListener {
 
                 if (failedCounter >30) { // continuously failed more than 30 times
                     firebaseEventUpdate( ""+"failed more than 30 times",
-                            "failed counter " + "more than 30",
-                            "failed counter reached " + failedCounter);
+                            "failed counter more than 30",
+                            "failed counter reached more than 30");
                 } else// failed within 30 times
                 {
                     firebaseEventUpdate( ""+String.valueOf(failedCounter),

@@ -180,7 +180,7 @@ public class MyService extends Service implements SensorEventListener {
 
         // 0,1 is considered as lying flat, no one is using
         if(inclination!=0 & inclination!=1) {
-            if (inclination < alertAngle & !screenOff) {
+            if (inclination < alertAngle & !screenOff) { // screen is not off and angle is less than ok
                 failedCounter++;
                 //alertAngle = mPreferences.getInt(getString(R.string.key_alert_angle),40);
                 //alertFrequency = mPreferences.getInt(getString(R.string.key_alert_frequency),1);
@@ -190,31 +190,24 @@ public class MyService extends Service implements SensorEventListener {
                 Toast.makeText(this, "Failed "+failedCounter + " times - Healthy Neck Check :(", Toast.LENGTH_LONG).show();
                 Log.d(TAG, "event detected, make toast." + " angle: " + inclination + ", Limit: " + alertAngle + " for every " + alertFrequency + " mins, " + "failed counter: " + failedCounter);
 
+                if (failedCounter >30) { // continuously failed more than 30 times
+                    firebaseEventUpdate( ""+"failed more than 30 times",
+                            "failed counter " + "more than 30",
+                            "failed counter reached " + failedCounter);
+                } else// failed within 30 times
+                {
+                    firebaseEventUpdate( ""+String.valueOf(failedCounter),
+                        "failed counter " + failedCounter,
+                        "failed counter reached " + failedCounter);
+                }
 
-                Bundle bundle = new Bundle();
-
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(failedCounter));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "failed counter " + failedCounter);
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "failed counter reached " + failedCounter);
-                FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
-
-/*                if (failedCounter==10){
-                    // reset counter to  0 when reach 10, show ads
-                    failedCounter=0;
-                }*/
-
-            } else if (!screenOff) {
+            } else if (!screenOff) { // angle is ok and screen is not off
                 failedCounter = 0;
             }
-        } else {
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(101010));
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "angle is " + inclination);
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "angle is " + inclination);
-            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        }  else { // angle is 0,1, lying flat, no one is using
+            firebaseEventUpdate( ""+String.valueOf(101010),
+                                "angle is " + inclination,
+                                "angle is " + inclination);
         }
 
         Log.d(TAG, "Unregistered listener.");
@@ -255,6 +248,15 @@ public class MyService extends Service implements SensorEventListener {
                 Log.d(TAG, "Screen is on");
             }
         }
+    }
+
+    private void firebaseEventUpdate(String itemIdString, String itemName, String ContentType){
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, itemIdString);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, itemName);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ContentType);
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
 

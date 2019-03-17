@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "516213439767",
+    "firebase_url": "https://insuranceagentassistant-ca1c7.firebaseio.com",
+    "project_id": "insuranceagentassistant-ca1c7",
+    "storage_bucket": "insuranceagentassistant-ca1c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516213439767:android:e09db7d0db724905",
+        "android_client_info": {
+          "package_name": "com.niuniusolutions.healthyniu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516213439767-naevc1qe6lal85ev4t31cmglvq02ntr6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.niuniusolutions.healthyniu",
+            "certificate_hash": "b834238b262aca5233d18f0c64b23b84c70058f7"
+          }
+        },
+        {
+          "client_id": "516213439767-0nuu6q6q8deig5n2asfob9laffo41r9c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeyZVRgPe0tt0mcqVTxCG-TfSVK5dNegg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516213439767-7asqmo6t5p2d8ms8avdh1n4h7relgisc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

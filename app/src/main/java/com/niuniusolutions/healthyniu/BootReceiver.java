@@ -12,9 +12,16 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "boot receiver signal received");
-        Intent myIntent = new Intent(context, Onboarding.class);
-        myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(myIntent);
+        String action = intent.getAction();
+        if (action !=null) {
+            if (action.equals(Intent.ACTION_BOOT_COMPLETED))  {
+                //opne report screen
+                Intent myIntent = new Intent(context, MainActivity.class);
+                myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(myIntent);
+            }
+        }
+
 
     }
 }

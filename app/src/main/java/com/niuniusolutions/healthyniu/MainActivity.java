@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         barEntries.add(new BarEntry(angle_61_75,4));
         barEntries.add(new BarEntry(angle_76_90,5));
         barEntries.add(new BarEntry(angle_91_above,6));
-        BarDataSet barDataSet = new BarDataSet(barEntries, "No of times appeared in that angle range");
+        BarDataSet barDataSet = new BarDataSet(barEntries, "No of times checked");
 
         ArrayList<String> theAngleRange = new ArrayList<>();
         theAngleRange.add("< 15°");

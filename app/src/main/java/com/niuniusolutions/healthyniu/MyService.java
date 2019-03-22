@@ -112,7 +112,7 @@ public class MyService extends Service implements SensorEventListener {
         Toast.makeText(this,R.string.toast_msg_service_started, Toast.LENGTH_LONG).show();
         Log.d(TAG, "On start command");
 
-        Intent notificationIntent = new Intent(this, Onboarding.class);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0,notificationIntent,0);
 
@@ -131,7 +131,7 @@ public class MyService extends Service implements SensorEventListener {
        // Toast.makeText(this, "OMG im destroyed", Toast.LENGTH_SHORT).show();
         unregisterReceiver(mReceiver);
         unregisterListener();
-        Log.d(TAG, "on destory, after unregister listener.");
+        Log.d(TAG, "on destroy, after unregister listener.");
     }
 
     @Nullable

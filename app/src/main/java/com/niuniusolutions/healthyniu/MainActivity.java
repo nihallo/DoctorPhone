@@ -41,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
         mBtnStart = (Button) findViewById(R.id.btnStartService);
         mBtnStop = (Button) findViewById(R.id.btnStopService);
 
-        //start the service when the screen loads, even if user did not click on start button.
-
+        //start the service when the screen loads, user did not need to click on start button.
+        Intent intent = new Intent(this,MyService.class);
+        startService(intent);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 

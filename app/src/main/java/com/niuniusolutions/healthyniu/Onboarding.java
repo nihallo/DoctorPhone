@@ -5,11 +5,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +24,11 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
     private TextView mDegreeText;
     private TextView mToastMsgText;
     private Button mStartButton;
+    private Button mHowItWorks;
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private int inclination;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,29 +43,48 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
         mSensor =mSM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSM.registerListener(this,mSensor,SensorManager.SENSOR_DELAY_NORMAL);
 
-        mDegreeText = (TextView) findViewById(R.id.mDegreeText);
-        mToastMsgText = (TextView) findViewById(R.id.toastMsgText);
-        mStartButton = (Button) findViewById(R.id.mStartButton);
+        mDegreeText = findViewById(R.id.mDegreeText);
+        mToastMsgText = findViewById(R.id.toastMsgText);
+        mStartButton =  findViewById(R.id.mStartButton);
+        mHowItWorks =  findViewById(R.id.mHowItWorks);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-            mStartButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+
+        mStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mStartButton.getId()));
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mStartButton.getText().toString());
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "start button on first screen");
-                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mStartButton.getId()));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mStartButton.getText().toString());
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "start button on first screen");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
-                    Intent intent = new Intent(Onboarding.this,MainActivity.class);
-                    Onboarding.this.startActivity(intent);
+                Intent intent = new Intent(Onboarding.this,MainActivity.class);
+                Onboarding.this.startActivity(intent);
 
 
 
-                }
-            });
+            }
+        });
+
+        mHowItWorks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mHowItWorks.getId()));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mHowItWorks.getText().toString());
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "How it works button on first screen");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+                Intent intent = new Intent(Onboarding.this,HowItWorks.class);
+                Onboarding.this.startActivity(intent);
+
+            }
+        });
+
+
 
     }
 
@@ -72,19 +97,18 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
         g[0]=g[0]/norm_Of_g;
         g[1]=g[1]/norm_Of_g;
         g[2]=g[2]/norm_Of_g;
-        int inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
-        if (inclination <30) {
-            mDegreeText.setText("Reading Posture: " + "Not Good");
-        } else if (inclination <70){
-            mDegreeText.setText("Reading Posture: " + "Better");
-        } else {
-            mDegreeText.setText("Reading Posture: " + "Good for Neck");
-        }
+        inclination = (int) Math.round(Math.toDegrees(Math.acos(g[2])));
+
+        mDegreeText.setText(""+inclination+"°");
+
+        //show and hide the toast text
         if (inclination<40){
             mToastMsgText.setVisibility(View.VISIBLE);
         }else {
             mToastMsgText.setVisibility(View.INVISIBLE);
         }
+
+
     }
 
     @Override

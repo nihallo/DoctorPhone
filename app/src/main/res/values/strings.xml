@@ -23,7 +23,6 @@
     <string name="promoteText">Running in background</string>
     <string name="raisePhone">Raise the phone higher, relax your neck.</string>
     <string name="toastMsg">Raise the phone straight up, Higher! Higher! Yeah!</string>
-    <string name="movePhoneUpDown">Raise the phone higher, higher, Yeah!!!</string>
     <string name="popup_healthy_neck_failed_message">Failed x times - Healthy Neck Check :(</string>
     <string name="BtnTextShowReport">How did i do? (After a few days)</string>
     <string name="app_logic">1. Every one minute, the app will check your reading posture, if it is \'Not Good\' or \'Bad\', it will alert you by pop message that will disappear by itself.
@@ -31,6 +30,10 @@
         \n\n3. Don\'t worry about battery, it won\'t even shown on the battery usage listing.</string>
     <string name="notification_text">Good reading posture, don\'t bend neck.</string>
     <string name="explainReportText">Angle 50-90 range is better for neck. \n>90 most likely reading while lying down.</string>
+    <string name="callToAction">- Raise the phone up and down
+        \n - Try to look up and down
+        \n - Feel the neck movement
+        \n - Try to sit straight, help the neck to relax</string>
 
 
 </resources>

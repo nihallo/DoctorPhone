@@ -1,5 +1,7 @@
 package com.niuniusolutions.healthyniu;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -16,12 +18,11 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG =MainActivity.class.getSimpleName();
-    private Button mBtnStart;
-    private Button mBtnStop;
+    private Button mBackButton;
+    private Button mOnOffButton;
     private Button mBtnSetting;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences mPreferences;
@@ -38,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mBtnStart = (Button) findViewById(R.id.btnStartService);
-        mBtnStop = (Button) findViewById(R.id.btnStopService);
+        mBackButton = (Button) findViewById(R.id.backButton);
+        mOnOffButton = (Button) findViewById(R.id.onOffButton);
 
         //start the service when the screen loads, user did not need to click on start button.
         Intent intent = new Intent(this,MyService.class);
@@ -47,33 +48,33 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        mBtnStart.setOnClickListener(new View.OnClickListener() {
+        mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG,"On Start click");
-               Intent intent = new Intent(MainActivity.this,MyService.class);
-               startService(intent);
-               mBtnStart.setText("Service Running!");
-
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mBtnStart.getId()));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mBtnStart.getText().toString());
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "start button on second screen");
-                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+               Intent intent = new Intent(MainActivity.this,Onboarding.class);
+               MainActivity.this.startActivity(intent);
             }
         });
 
-        mBtnStop.setOnClickListener(new View.OnClickListener() {
+        mOnOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,MyService.class);
-                stopService(intent);
-                mBtnStart.setText("Start Caring!");
+
+                if (isMyServiceRunning(MyService.class)){
+                    Intent intent = new Intent(MainActivity.this,MyService.class);
+                    stopService(intent);
+                    mOnOffButton.setText(R.string.StartBtnText);
+                } else //service is not running
+                {
+                    Intent intent = new Intent(MainActivity.this,MyService.class);
+                    startService(intent);
+                    mOnOffButton.setText(R.string.StopBtnText);
+                }
 
                 Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mBtnStop.getId()));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mBtnStop.getText().toString());
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "stop button on second screen");
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mOnOffButton.getId()));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mOnOffButton.getText().toString());
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "on-off button on report screen");
                 mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             }
         });
@@ -117,4 +118,16 @@ public class MainActivity extends AppCompatActivity {
         barChart.setScaleEnabled(true);
 
     }
+
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+

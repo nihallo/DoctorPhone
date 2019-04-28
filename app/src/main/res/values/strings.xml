@@ -18,8 +18,8 @@
     <string name="reportBtn">Health Reports</string>
     <string name="angleSelectionText">Alert Trigger Point/Angle</string>
     <string name="alterFrequencyText">Alert Frequency</string>
-    <string name="StartBtnText">Service Running. :)</string>
-    <string name="StopBtnText">Stop Caring. :(</string>
+    <string name="StartBtnText">START CARING. :)</string>
+    <string name="StopBtnText">STOP CARING. :(</string>
     <string name="promoteText">Running in background</string>
     <string name="raisePhone">Raise the phone higher, relax your neck.</string>
     <string name="toastMsg">Raise the phone straight up, Higher! Higher! Yeah!</string>
@@ -29,7 +29,7 @@
         \n\n2. The pop up message shows no. of time(continuously) failed \'healthy neck check\'.
         \n\n3. Don\'t worry about battery, it won\'t even shown on the battery usage listing.</string>
     <string name="notification_text">Good reading posture, don\'t bend neck.</string>
-    <string name="explainReportText">Angle 50-90 range is better for neck. \n>90 most likely reading while lying down.</string>
+    <string name="explainReportText">More Weight on Neck &lt;--- ---&gt; Better Posture</string>
     <string name="callToAction">- Raise the phone up and down
         \n - Try to look up and down
         \n - Feel the neck movement

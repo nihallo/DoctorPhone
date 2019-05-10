@@ -4,10 +4,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -33,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private int angle_61_75;
     private int angle_76_90;
     private int angle_91_above;
+    private int total_count_all_angles;
     BarChart barChart;
 
     @Override
@@ -89,26 +89,28 @@ public class MainActivity extends AppCompatActivity {
         angle_76_90=mPreferences.getInt(getString(R.string.key_76_90_angle),0);
         angle_91_above=mPreferences.getInt(getString(R.string.key_91_above_angle),0);
 
+        total_count_all_angles=angle_0_15+angle_16_30+angle_31_45+angle_46_60+angle_61_75+angle_76_90+angle_91_above;
+
         barChart = (BarChart) findViewById(R.id.barchart);
 
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(angle_0_15,0));
-        barEntries.add(new BarEntry(angle_16_30,1));
+        barEntries.add(new BarEntry(angle_0_15+angle_16_30,0));
+        //barEntries.add(new BarEntry(angle_16_30,1));
         barEntries.add(new BarEntry(angle_31_45,2));
         barEntries.add(new BarEntry(angle_46_60,3));
-        barEntries.add(new BarEntry(angle_61_75,4));
-        barEntries.add(new BarEntry(angle_76_90,5));
+        //barEntries.add(new BarEntry(angle_61_75,4));
+        barEntries.add(new BarEntry(angle_76_90+angle_61_75,5));
         barEntries.add(new BarEntry(angle_91_above,6));
         BarDataSet barDataSet = new BarDataSet(barEntries, "No of times checked");
 
         ArrayList<String> theAngleRange = new ArrayList<>();
-        theAngleRange.add("< 15°");
-        theAngleRange.add("< 30°");
-        theAngleRange.add("< 45°");
-        theAngleRange.add("< 60°");
-        theAngleRange.add("< 75°");
-        theAngleRange.add("< 90°");
-        theAngleRange.add("> 90°");
+       // theAngleRange.add("< 15°");
+        theAngleRange.add(Math.round((angle_0_15+angle_16_30)/total_count_all_angles*100)+"%<30°");
+        theAngleRange.add(Math.round(angle_31_45/total_count_all_angles*100)+"% <45°");
+        theAngleRange.add(Math.round(angle_46_60/total_count_all_angles*100)+"% <60°");
+        //theAngleRange.add("< 75°");
+        theAngleRange.add(Math.round(angle_61_75+angle_76_90/total_count_all_angles*100)+"% <90°");
+        theAngleRange.add(Math.round(angle_91_above/total_count_all_angles*100)+"%>90°");
 
         BarData theData = new BarData(theAngleRange, barDataSet);
         barChart.setData(theData);

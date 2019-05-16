@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG =MainActivity.class.getSimpleName();
     private Button mBackButton;
     private Button mOnOffButton;
-    private Button mBtnSetting;
     private FirebaseAnalytics mFirebaseAnalytics;
     private SharedPreferences mPreferences;
     private int angle_0_15;
@@ -43,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
         mOnOffButton = (Button) findViewById(R.id.onOffButton);
 
         //start the service when the screen loads, user did not need to click on start button.
-        Intent intent = new Intent(this,MyService.class);
-        startService(intent);
+        if(!isMyServiceRunning(MyService.class)) {
+            Intent intent = new Intent(this, MyService.class);
+            startService(intent);
+        }
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         angle_0_15=mPreferences.getInt(getString(R.string.key_0_15_angle),0);
+        Log.d(TAG, "after reading from preference: angle_0_15 "+angle_0_15);
         angle_16_30=mPreferences.getInt(getString(R.string.key_16_30_angle),0);
         angle_31_45=mPreferences.getInt(getString(R.string.key_31_45_angle),0);
         angle_46_60=mPreferences.getInt(getString(R.string.key_46_60_angle),0);
@@ -94,23 +97,23 @@ public class MainActivity extends AppCompatActivity {
         barChart = (BarChart) findViewById(R.id.barchart);
 
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(angle_0_15+angle_16_30,0));
+        barEntries.add(new BarEntry((angle_0_15+angle_16_30),0));
         //barEntries.add(new BarEntry(angle_16_30,1));
-        barEntries.add(new BarEntry(angle_31_45,2));
-        barEntries.add(new BarEntry(angle_46_60,3));
+        barEntries.add(new BarEntry(angle_31_45,1));
+        barEntries.add(new BarEntry(angle_46_60,2));
         //barEntries.add(new BarEntry(angle_61_75,4));
-        barEntries.add(new BarEntry(angle_76_90+angle_61_75,5));
-        barEntries.add(new BarEntry(angle_91_above,6));
+        barEntries.add(new BarEntry((angle_76_90+angle_61_75),3));
+        barEntries.add(new BarEntry(angle_91_above,4));
         BarDataSet barDataSet = new BarDataSet(barEntries, "No of times checked");
 
         ArrayList<String> theAngleRange = new ArrayList<>();
        // theAngleRange.add("< 15°");
-        theAngleRange.add(Math.round((angle_0_15+angle_16_30)/total_count_all_angles*100)+"%<30°");
-        theAngleRange.add(Math.round(angle_31_45/total_count_all_angles*100)+"% <45°");
-        theAngleRange.add(Math.round(angle_46_60/total_count_all_angles*100)+"% <60°");
+        theAngleRange.add(Math.round((angle_0_15+angle_16_30)*100/total_count_all_angles)+"%<30°");
+        theAngleRange.add(Math.round(angle_31_45*100/total_count_all_angles)+"%<45°");
+        theAngleRange.add(Math.round(angle_46_60*100/total_count_all_angles)+"%<60°");
         //theAngleRange.add("< 75°");
-        theAngleRange.add(Math.round(angle_61_75+angle_76_90/total_count_all_angles*100)+"% <90°");
-        theAngleRange.add(Math.round(angle_91_above/total_count_all_angles*100)+"%>90°");
+        theAngleRange.add(Math.round((angle_61_75+angle_76_90)*100/total_count_all_angles)+"%<90°");
+        theAngleRange.add(Math.round( angle_91_above*100/total_count_all_angles)+"%>90°");
 
         BarData theData = new BarData(theAngleRange, barDataSet);
         barChart.setData(theData);

@@ -1,6 +1,7 @@
 package com.niuniusolutions.healthyniu;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -21,6 +22,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import static com.niuniusolutions.healthyniu.App.CHANNEL_ID;
@@ -47,6 +49,7 @@ public class MyService extends Service implements SensorEventListener {
     private int angle_61_75;
     private int angle_76_90;
     private int angle_91_above;
+    private int angle_all_count;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
     private int failedCounter=0;
@@ -79,6 +82,9 @@ public class MyService extends Service implements SensorEventListener {
         angle_61_75=mPreferences.getInt(getString(R.string.key_61_75_angle),0);
         angle_76_90=mPreferences.getInt(getString(R.string.key_76_90_angle),0);
         angle_91_above=mPreferences.getInt(getString(R.string.key_91_above_angle),0);
+        angle_all_count = angle_0_15+angle_16_30+angle_31_45+angle_46_60+angle_61_75+angle_76_90+angle_91_above;
+        //add Admob
+        MobileAds.initialize(this,"ca-app-pub-3940256099942544~3347511713");
 
     }
 
@@ -112,17 +118,20 @@ public class MyService extends Service implements SensorEventListener {
         Toast.makeText(this,R.string.toast_msg_service_started, Toast.LENGTH_LONG).show();
         Log.d(TAG, "On start command");
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0,notificationIntent,0);
+        Intent notificationIntent = new Intent(this, Onboarding.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
+
 
         Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setContentTitle("Healthy Neck")
-                .setContentText("Good reading posture = don't bend the neck.")
+                .setContentText("Keep Good Reading Posture.")
                 .setSmallIcon(R.drawable.notificationicon)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(333,notification);
+
+
         return Service.START_STICKY;
     }
 
@@ -183,23 +192,41 @@ public class MyService extends Service implements SensorEventListener {
         if(inclination!=0 & inclination!=1) {
             if (inclination < alertAngle & !screenOff) { // screen is not off and angle is less than ok
                 failedCounter++;
-                //alertAngle = mPreferences.getInt(getString(R.string.key_alert_angle),40);
-                //alertFrequency = mPreferences.getInt(getString(R.string.key_alert_frequency),1);
-
-                Log.d(TAG, "inside: alert angle:" + alertAngle + ", alert frequency: " + alertFrequency);
-
                 Toast.makeText(this, "Failed "+failedCounter + " times - Healthy Neck Check :(", Toast.LENGTH_LONG).show();
-                Log.d(TAG, "event detected, make toast." + " angle: " + inclination + ", Limit: " + alertAngle + " for every " + alertFrequency + " mins, " + "failed counter: " + failedCounter);
+
+
+                // update notification text
+
+                Intent notificationIntent = new Intent(this, Onboarding.class);
+                notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
+
+                if (failedCounter>10) {
+
+                    NotificationManager mNotifyManager;
+                    mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                            .setContentTitle("Healthy Neck")
+                            .setContentText(getFailedPercent() + "% of the times bends>45°, click to check report.")
+                            .setSmallIcon(R.drawable.notificationicon)
+                            .setContentIntent(pendingIntent)
+                            .build();
+                    mNotifyManager.notify(333, notification);
+                }
 
                 if (failedCounter >30) { // continuously failed more than 30 times
                     firebaseEventUpdate( ""+"Failed",
                             "failed counter more than 30",
                             "failed angle is "+ inclination );
-                } else// failed within 30 times
-                {
+                } else{// failed within 30 times
                     firebaseEventUpdate( "Failed",
                         "failed counter " + failedCounter,
                         "failed angle is " + inclination);
+                }
+                if (angle_all_count>100||failedCounter%10==0){ //after checking more than 100 times, very time failed 10 times in a row, update notifiction bar
+
+                Log.d(TAG,"FAILED 10 TIME");
+
                 }
 
             } else if (!screenOff) { // angle is ok and screen is not off
@@ -261,6 +288,24 @@ public class MyService extends Service implements SensorEventListener {
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ContentType);
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
+
+    private int getFailedPercent (){
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
+        alertAngle = 40;//mPreferences.getInt(getString(R.string.key_alert_angle),40);
+        alertFrequency = 1;//mPreferences.getInt(getString(R.string.key_alert_frequency),1);
+        angle_0_15=mPreferences.getInt(getString(R.string.key_0_15_angle),0);
+        angle_16_30=mPreferences.getInt(getString(R.string.key_16_30_angle),0);
+        angle_31_45=mPreferences.getInt(getString(R.string.key_31_45_angle),0);
+        angle_46_60=mPreferences.getInt(getString(R.string.key_46_60_angle),0);
+        angle_61_75=mPreferences.getInt(getString(R.string.key_61_75_angle),0);
+        angle_76_90=mPreferences.getInt(getString(R.string.key_76_90_angle),0);
+        angle_91_above=mPreferences.getInt(getString(R.string.key_91_above_angle),0);
+        angle_all_count = angle_0_15+angle_16_30+angle_31_45+angle_46_60+angle_61_75+angle_76_90+angle_91_above;
+
+        return (angle_0_15+angle_16_30 )*100/angle_all_count;
+
     }
 
 

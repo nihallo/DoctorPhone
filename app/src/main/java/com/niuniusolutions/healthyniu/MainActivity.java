@@ -15,6 +15,10 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
@@ -34,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private int angle_91_above;
     private int total_count_all_angles;
     BarChart barChart;
+    private AdView mAdView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +69,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (isMyServiceRunning(MyService.class)){
-                    Intent intent = new Intent(MainActivity.this,MyService.class);
-                    stopService(intent);
-                    mOnOffButton.setText(R.string.StartBtnText);
+
+                        Intent intent = new Intent(MainActivity.this,MyService.class);
+                        stopService(intent);
+                        mOnOffButton.setText(R.string.StartBtnText);
+
                 } else //service is not running
                 {
                     Intent intent = new Intent(MainActivity.this,MyService.class);
@@ -122,6 +130,50 @@ public class MainActivity extends AppCompatActivity {
         barChart.setDragEnabled(true);
         barChart.setScaleEnabled(true);
 
+        //add Admob
+        MobileAds.initialize(this,"ca-app-pub-3940256099942544~3347511713");
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+        mAdView.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                Log.i(TAG, "onAdLoaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                Log.i(TAG, "onAdFailedToLoad");
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+                Log.i(TAG, "onAdOpened");
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+                Log.i(TAG, "onAdClicked");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+                Log.i(TAG, "onAdLeftApplication");
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+                Log.i(TAG, "onAdClosed");
+            }
+        });
     }
 
 

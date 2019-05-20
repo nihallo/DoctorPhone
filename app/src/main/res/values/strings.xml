@@ -25,14 +25,17 @@
     <string name="toastMsg">Raise the phone straight up, Higher! Higher! Yeah!</string>
     <string name="popup_healthy_neck_failed_message">Failed x times - Healthy Neck Check :(</string>
     <string name="BtnTextShowReport">How did i do? (After a few days)</string>
-    <string name="app_logic">1. Every one minute, the app will check your reading posture, if it is \'Not Good\' or \'Bad\', it will alert you by pop message that will disappear by itself.
-        \n\n2. The pop up message shows no. of time(continuously) failed \'healthy neck check\'.
-        \n\n3. Don\'t worry about battery, it won\'t even shown on the battery usage listing.</string>
+    <string name="app_logic">1. No Battery concern, it won\'t even shown on the battery usage listing.
+        \n\n2. Every one minute, the app will check your reading posture, if the neck bends too much, it will alert you.
+        \n\n3. The alert is a pop up message, will disappear by itself, no impact to your work.
+        \n\n4. The pop up message shows no. of times failed in a row: \'healthy neck check\'.</string>
     <string name="notification_text">Good reading posture, don\'t bend neck.</string>
-    <string name="explainReportText">More w8 on neck &lt;- -&gt; Better posture -> Lie down</string>
+    <string name="explainReportText">More w8 on neck&lt;--&gt;Better posture->Lie down</string>
     <string name="callToAction">- Raise the phone up and down
         \n - Try to look up and down
         \n - Feel the neck movement
         \n - Try to sit straight, help the neck to relax</string>
+
+    <string name="preparingReport">Preparing Report, Just a second.</string>
 
 </resources>

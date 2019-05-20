@@ -9,23 +9,33 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class Onboarding extends AppCompatActivity implements SensorEventListener{
+    private static final String TAG = Onboarding.class.getSimpleName();
     private SensorManager mSM;
     private Sensor mSensor;
     private TextView mDegreeText;
     private TextView mToastMsgText;
-    private Button mStartButton;
+    private Button mReportButton;
     private Button mHowItWorks;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private int inclination;
-
+    private AdView mAdView;
+    private InterstitialAd mInterstitialAd;
+    private int reportBtnClickCounter; // go to the next screen when click 3 time even ads is not loaded.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,27 +54,32 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
 
         mDegreeText = findViewById(R.id.mDegreeText);
         mToastMsgText = findViewById(R.id.toastMsgText);
-        mStartButton =  findViewById(R.id.mStartButton);
+        mReportButton =  findViewById(R.id.mReportButton);
         mHowItWorks =  findViewById(R.id.mHowItWorks);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
 
-        mStartButton.setOnClickListener(new View.OnClickListener() {
+
+        mReportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
                 Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mStartButton.getId()));
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mStartButton.getText().toString());
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "start button on first screen");
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(mReportButton.getId()));
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mReportButton.getText().toString());
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "report button on first screen");
                 mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
-                Intent intent = new Intent(Onboarding.this,MainActivity.class);
-                Onboarding.this.startActivity(intent);
-
-
-
+                // add interstitialAd
+                if(mInterstitialAd.isLoaded()){
+                    mInterstitialAd.show();
+                }else if (reportBtnClickCounter<2){
+                    Toast.makeText(Onboarding.this,R.string.preparingReport,Toast.LENGTH_LONG).show();
+                    reportBtnClickCounter++;
+                }else{
+                    Intent intent = new Intent(Onboarding.this,MainActivity.class);
+                    Onboarding.this.startActivity(intent);
+                }
             }
         });
 
@@ -79,10 +94,94 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
 
                 Intent intent = new Intent(Onboarding.this,HowItWorks.class);
                 Onboarding.this.startActivity(intent);
-
             }
         });
 
+        //add Admob
+        MobileAds.initialize(this,"ca-app-pub-6853780483343253~2516912270");
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequestBannerAds = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequestBannerAds);
+        mAdView.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                Log.i(TAG, "onAdLoaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                Log.i(TAG, "onAdFailedToLoad");
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+                Log.i(TAG, "onAdOpened");
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+                Log.i(TAG, "onAdClicked");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+                Log.i(TAG, "onAdLeftApplication");
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+                Log.i(TAG, "onAdClosed");
+            }
+        });
+
+        // add interstitialAd
+        reportBtnClickCounter=0;
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-6853780483343253/9750859873");
+        AdRequest adRequestInterstitial = new AdRequest.Builder().build();
+        mInterstitialAd.loadAd(adRequestInterstitial);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the interstitial ad is closed.
+                Intent intent = new Intent(Onboarding.this,MainActivity.class);
+                Onboarding.this.startActivity(intent);
+            }
+        });
 
 
     }

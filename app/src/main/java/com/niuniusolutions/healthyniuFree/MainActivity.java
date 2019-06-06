@@ -1,4 +1,4 @@
-package com.niuniusolutions.healthyniu;
+package com.niuniusolutions.healthyniuFree;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -133,7 +133,9 @@ public class MainActivity extends AppCompatActivity {
         //add Admob
         MobileAds.initialize(this,"ca-app-pub-3940256099942544~3347511713");
         mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder()
+                //addTestDevice("0FD57F2D05ED2C6840BE6D79D98EB3F1")
+                .build();
         mAdView.loadAd(adRequest);
         mAdView.setAdListener(new AdListener(){
             @Override

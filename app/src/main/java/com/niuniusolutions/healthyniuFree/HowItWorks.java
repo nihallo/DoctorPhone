@@ -1,4 +1,4 @@
-package com.niuniusolutions.healthyniu;
+package com.niuniusolutions.healthyniuFree;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -57,7 +57,9 @@ public class HowItWorks extends AppCompatActivity {
 
 
         mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder()
+                //addTestDevice("0FD57F2D05ED2C6840BE6D79D98EB3F1")
+                .build();
         mAdView.loadAd(adRequest);
 
         mAdView.setAdListener(new AdListener(){
@@ -103,7 +105,9 @@ public class HowItWorks extends AppCompatActivity {
         reportBtnClickCounter = 0;
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId("ca-app-pub-6853780483343253/8040879303");
-        AdRequest adRequestInterstitial = new AdRequest.Builder().build();
+        AdRequest adRequestInterstitial = new AdRequest.Builder()
+                //addTestDevice("0FD57F2D05ED2C6840BE6D79D98EB3F1")
+                .build();
         mInterstitialAd.loadAd(adRequestInterstitial);
 
         mInterstitialAd.setAdListener(new AdListener() {

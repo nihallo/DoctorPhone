@@ -27,9 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16sp"
         android:layout_marginEnd="32sp"
-        android:layout_marginBottom="16dp"
         android:text="Report"
-        app:layout_constraintBottom_toTopOf="@+id/adView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mButtonBack"
         app:layout_constraintTop_toTopOf="@+id/mButtonBack" />

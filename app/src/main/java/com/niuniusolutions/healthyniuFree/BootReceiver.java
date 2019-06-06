@@ -1,4 +1,4 @@
-package com.niuniusolutions.healthyniu;
+package com.niuniusolutions.healthyniuFree;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.niuniusolutions.healthyniu;
+package com.niuniusolutions.healthyniuFree;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -100,7 +100,9 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
         //add Admob
         MobileAds.initialize(this,"ca-app-pub-6853780483343253~2516912270");
         mAdView = findViewById(R.id.adView);
-        AdRequest adRequestBannerAds = new AdRequest.Builder().build();
+        AdRequest adRequestBannerAds = new AdRequest.Builder()
+                //addTestDevice("0FD57F2D05ED2C6840BE6D79D98EB3F1")
+                .build();
         mAdView.loadAd(adRequestBannerAds);
         mAdView.setAdListener(new AdListener(){
             @Override
@@ -146,7 +148,10 @@ public class Onboarding extends AppCompatActivity implements SensorEventListener
         reportBtnClickCounter=0;
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId("ca-app-pub-6853780483343253/9750859873");
-        AdRequest adRequestInterstitial = new AdRequest.Builder().build();
+        AdRequest adRequestInterstitial = new AdRequest.Builder()
+                //addTestDevice("0FD57F2D05ED2C6840BE6D79D98EB3F1")
+                .build()
+                ;
         mInterstitialAd.loadAd(adRequestInterstitial);
 
         mInterstitialAd.setAdListener(new AdListener() {

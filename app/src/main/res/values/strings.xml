@@ -31,7 +31,7 @@
         \n\n4. The pop up message shows no. of times failed in a row: \'healthy neck check\'.</string>
     <string name="notification_text">Good reading posture, don\'t bend neck.</string>
     <string name="explainReportText">More w8 on neck&lt;--&gt;Better posture->Lie down</string>
-    <string name="callToAction">- Raise the phone up and down
+    <string name="callToAction"> - Raise the phone up and down
         \n - Try to look up and down
         \n - Feel the neck movement
         \n - Try to sit straight, help the neck to relax</string>

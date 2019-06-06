@@ -1,4 +1,4 @@
-package com.niuniusolutions.healthyniu;
+package com.niuniusolutions.healthyniuFree;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import static com.niuniusolutions.healthyniu.App.CHANNEL_ID;
+import static com.niuniusolutions.healthyniuFree.App.CHANNEL_ID;
 
 /**
  * Created by LEO on 5/11/2017.
